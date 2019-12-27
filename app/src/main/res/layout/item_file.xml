@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.kobbi.project.renamefile.utils.Utils" />
+
+        <variable
+            name="file"
+            type="java.io.File" />
+
+        <variable
+            name="img"
+            type="android.graphics.Bitmap" />
+
+        <variable
+            name="file_position"
+            type="Integer" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
+        android:background="?attr/selectableItemBackground"
+        android:padding="5dp">
+
+        <ImageView
+            android:id="@+id/iv_file_img"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:getFile="@{file}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:setImg="@{img}"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tv_item_file_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="13dp"
+            android:maxLines="1"
+            android:text="@{file.name}"
+            android:textAlignment="textStart"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_file_img"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="SpUsage" />
+
+        <TextView
+            android:id="@+id/tv_item_file_last_modified"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@{Utils.convertLongToDate(file.lastModified())}"
+            android:textSize="14dp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_file_img"
+            app:layout_constraintStart_toStartOf="@+id/tv_item_file_name"
+            app:layout_constraintTop_toBottomOf="@+id/tv_item_file_name"
+            tools:ignore="SpUsage" />
+
+        <TextView
+            android:id="@+id/tv_item_file_position"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:text="@{String.valueOf(file_position + 1)}"
+            android:textSize="13dp"
+            app:layout_constraintEnd_toStartOf="@id/tv_item_file_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:ignore="SpUsage" />
+
+        <TextView
+            android:id="@+id/tv_item_file_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14dp"
+            app:getFileSize="@{file}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="SpUsage" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
