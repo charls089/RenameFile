@@ -2,4 +2,8 @@
     <string name="app_name">RenameFile</string>
 
     <string name="info_exit_message">\'뒤로\'버튼 한번 더 누르시면 종료됩니다.</string>
+    <string name="edit_content_description">edit file extension</string>
+    <string name="send_email_content_description">send email with file</string>
+    <string name="info_progress">데이터 변경중 …</string>
 </resources>
+

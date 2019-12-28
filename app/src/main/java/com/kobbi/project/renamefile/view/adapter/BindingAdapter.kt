@@ -49,10 +49,13 @@ class BindingAdapter private constructor() {
                     setImageResource(R.drawable.baseline_folder_white_48)
                 else {
                     file.run {
-                        if (Utils.isPictureFile(this)) {
-                            setImageBitmap(img)
-                        } else {
-                            setImageResource(R.drawable.icons8_archive_folder_96)
+                        when {
+                            Utils.isPictureFile(this) ->
+                                setImageBitmap(img)
+                            Utils.isZipFile(this) ->
+                                setImageResource(R.drawable.icons8_archive_folder_96)
+                            else ->
+                                setImageResource(R.drawable.baseline_insert_drive_file_white_48)
                         }
                     }
                 }

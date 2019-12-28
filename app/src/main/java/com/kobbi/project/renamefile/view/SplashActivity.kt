@@ -10,7 +10,7 @@ import com.kobbi.project.renamefile.R
 class SplashActivity : AppCompatActivity() {
     companion object {
         private val NEED_PERMISSIONS =
-            arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+            arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
         private const val REQUEST_CODE_PERMISSIONS = 100
     }
 
