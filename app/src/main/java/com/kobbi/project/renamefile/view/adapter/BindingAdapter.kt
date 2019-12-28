@@ -97,10 +97,10 @@ class BindingAdapter private constructor() {
             if (items != null && dirVm != null)
                 recyclerView.adapter?.run {
                     if (this is PathAdapter) {
-                        setItems(items.split('/'))
+                            setItems(setItemPath(items, dirVm.rootPath))
                     }
-                }?: kotlin.run {
-                    val adapter = PathAdapter(items.split('/')).apply {
+                } ?: kotlin.run {
+                    val adapter = PathAdapter(setItemPath(items, dirVm.rootPath)).apply {
                         clickListener = object : ClickListener {
                             override fun onItemClick(position: Int, view: View) {
                                 view.context.applicationContext?.let {
@@ -111,6 +111,14 @@ class BindingAdapter private constructor() {
                     }
                     recyclerView.adapter = adapter
                 }
+        }
+
+        private fun setItemPath(path: String, rootPath: String) :List<String>{
+            var replacePath = ""
+            if (path.contains(rootPath)) {
+                replacePath = path.replace(rootPath, "내부저장소")
+            }
+            return replacePath.split('/')
         }
     }
 }

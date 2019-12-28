@@ -1,10 +1,7 @@
 package com.kobbi.project.renamefile.view
 
-import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
-import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -16,7 +13,6 @@ import com.kobbi.project.renamefile.databinding.ActivityMainBinding
 import com.kobbi.project.renamefile.utils.BackPressedCloser
 import com.kobbi.project.renamefile.utils.Utils
 import com.kobbi.project.renamefile.view.model.DirViewModel
-import java.io.File
 
 class MainActivity : AppCompatActivity() {
     private val mBackPressedCloser by lazy { BackPressedCloser(this) }

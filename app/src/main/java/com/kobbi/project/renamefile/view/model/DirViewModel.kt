@@ -20,8 +20,7 @@ class DirViewModel(application: Application) : AndroidViewModel(application) {
     private val _currentPath: MutableLiveData<String> = MutableLiveData()
     private val _currentItems: MutableLiveData<List<File>> = MutableLiveData()
 
-    private val rootPath =
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
+    val rootPath = Environment.getExternalStorageDirectory().absolutePath
 
     init {
 //        val prevCurrentPath = Utils.getPath(application)
