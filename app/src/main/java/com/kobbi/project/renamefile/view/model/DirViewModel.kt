@@ -1,35 +1,30 @@
 package com.kobbi.project.renamefile.view.model
 
-import android.app.Application
 import android.os.Environment
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.kobbi.project.renamefile.utils.SingleLiveEvent
 import com.kobbi.project.renamefile.utils.Utils
 import java.io.File
 import java.io.FileFilter
 
-class DirViewModel(application: Application) : AndroidViewModel(application) {
+class DirViewModel : ViewModel() {
     val currentItems: LiveData<List<File>> get() = _currentItems
     val currentPath: LiveData<String> get() = _currentPath
     val clickEdit: SingleLiveEvent<Any> = SingleLiveEvent()
-    val clickSend: SingleLiveEvent<Any> = SingleLiveEvent()
+    val clickSend: SingleLiveEvent<List<File>> = SingleLiveEvent()
 
     private val _currentPath: MutableLiveData<String> = MutableLiveData()
     private val _currentItems: MutableLiveData<List<File>> = MutableLiveData()
 
-    val rootPath = Environment.getExternalStorageDirectory().absolutePath
+    val rootPath: String? = Environment.getExternalStorageDirectory().absolutePath
 
     init {
-//        val prevCurrentPath = Utils.getPath(application)
         Log.e("####", "rootPath : $rootPath")
         setItems(
-//            if (prevCurrentPath.isEmpty())
-            rootPath
-//            else
-//                prevCurrentPath
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
         )
     }
 
@@ -80,7 +75,7 @@ class DirViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun clickSend() {
-        clickSend.call()
+        clickSend.call(_currentItems.value)
     }
 
     private fun setItems(path: String?) {

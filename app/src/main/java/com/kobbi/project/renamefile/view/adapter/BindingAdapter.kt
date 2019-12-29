@@ -113,9 +113,9 @@ class BindingAdapter private constructor() {
                 }
         }
 
-        private fun setItemPath(path: String, rootPath: String) :List<String>{
+        private fun setItemPath(path: String, rootPath: String?) :List<String>{
             var replacePath = ""
-            if (path.contains(rootPath)) {
+            if (rootPath !=null && path.contains(rootPath)) {
                 replacePath = path.replace(rootPath, "내부저장소")
             }
             return replacePath.split('/')

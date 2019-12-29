@@ -1,10 +1,12 @@
 package com.kobbi.project.renamefile.view
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -48,8 +50,21 @@ class MainActivity : AppCompatActivity() {
 
                 clickSend.observe(this@MainActivity, Observer {
                     Log.e("####", "clickSend Button")
-                    //TODO G-Mail 공유하기
-                    Toast.makeText(this@MainActivity, "아직 지원하지 않습니다.", Toast.LENGTH_SHORT).show()
+                    val sendIntent = Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+                        type = "plain/text"
+                        val uriList = ArrayList<Uri>().apply {
+                            it?.forEach {
+                                val uri =
+                                    FileProvider.getUriForFile(
+                                        applicationContext, "$packageName.file.provider", it
+                                    )
+                                Log.e("####", "uri : $uri")
+                                add(uri)
+                            }
+                        }
+                        putParcelableArrayListExtra(Intent.EXTRA_STREAM, uriList)
+                    }
+                    startActivity(sendIntent)
                 })
             }
             lifecycleOwner = this@MainActivity

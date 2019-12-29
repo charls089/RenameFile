@@ -66,22 +66,11 @@
             tools:ignore="SpUsage" />
 
         <TextView
-            android:id="@+id/tv_item_file_position"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:text="@{String.valueOf(file_position + 1)}"
-            android:textSize="13dp"
-            app:layout_constraintEnd_toStartOf="@id/tv_item_file_size"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:ignore="SpUsage" />
-
-        <TextView
             android:id="@+id/tv_item_file_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14dp"
+            android:layout_marginEnd="7dp"
             app:getFileSize="@{file}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
