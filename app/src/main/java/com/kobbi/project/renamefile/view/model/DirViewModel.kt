@@ -21,11 +21,8 @@ class DirViewModel : ViewModel() {
 
     val clickEdit: SingleLiveEvent<Any> = SingleLiveEvent()
     val clickSend: SingleLiveEvent<List<File>> = SingleLiveEvent()
-    val clickCreateFolder: SingleLiveEvent<Any> = SingleLiveEvent()
-    val clickMove: SingleLiveEvent<Any> = SingleLiveEvent()
-    val clickCopy: SingleLiveEvent<Any> = SingleLiveEvent()
     val clickDelete: SingleLiveEvent<Any> = SingleLiveEvent()
-    val clickInfo: SingleLiveEvent<Any> = SingleLiveEvent()
+    val clickInfo: SingleLiveEvent<File> = SingleLiveEvent()
 
     val refresh: LiveData<List<Int>> get() = _refresh
     val folderName: MutableLiveData<String> = MutableLiveData()
@@ -56,6 +53,7 @@ class DirViewModel : ViewModel() {
         _selectMode.postValue(SelectMode.NORMAL)
         _selectedPositions.postValue(listOf())
         _isCreateNewFolderOpen.postValue(false)
+        clickInfo.postValue(null)
     }
 
     fun goToPrevPath() {
@@ -132,19 +130,16 @@ class DirViewModel : ViewModel() {
 
     fun clickCreateFolder() {
         _isCreateNewFolderOpen.postValue(true)
-        clickCreateFolder.call()
     }
 
     fun clickMove() {
         _selectMode.postValue(SelectMode.MOVE)
         setSelectedItems()
-        clickMove.call()
     }
 
     fun clickCopy() {
         _selectMode.postValue(SelectMode.COPY)
         setSelectedItems()
-        clickCopy.call()
     }
 
     fun clickDelete() {
@@ -152,7 +147,10 @@ class DirViewModel : ViewModel() {
     }
 
     fun clickInfo() {
-        clickInfo.call()
+        val file = _selectedPositions.value?.lastOrNull()?.let { position ->
+            _currentItems.value?.get(position)
+        }
+        clickInfo.call(file)
     }
 
     fun clickCancel() {
@@ -184,17 +182,18 @@ class DirViewModel : ViewModel() {
         val mode = _selectMode.value
         mSelectedItems?.forEach {
             val filePath = "$destPath/${it.name}"
-            when (mode) {
-                SelectMode.MOVE -> {
-                    it.renameTo(File(filePath))
+            if (!File(filePath).exists())
+                when (mode) {
+                    SelectMode.MOVE -> {
+                        it.renameTo(File(filePath))
+                    }
+                    SelectMode.COPY -> {
+                        it.copyTo(File(filePath))
+                    }
+                    else -> {
+                        //Nothing.
+                    }
                 }
-                SelectMode.COPY -> {
-                    val file = it.copyTo(File(filePath))
-                }
-                else -> {
-                    //Nothing.
-                }
-            }
         }
         resetMode()
         setItems(_currentPath.value)

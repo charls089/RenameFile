@@ -80,8 +80,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 })
 
-                clickInfo.observe(this@MainActivity, Observer {
-                    Toast.makeText(applicationContext, "서비스 준비중입니다.", Toast.LENGTH_SHORT).show()
+                clickInfo.observe(this@MainActivity, Observer { file ->
+                    file?.run {
+                        FileInfoDialog(this).show(supportFragmentManager, FileInfoDialog.TAG)
+                    }
                 })
             }
             lifecycleOwner = this@MainActivity

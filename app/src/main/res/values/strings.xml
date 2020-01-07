@@ -28,5 +28,11 @@
     <string name="dialog_no">아니요</string>
 
     <string name="count_format">총 %d개</string>
+
+    <string name="dialog_info_title">상세정보</string>
+    <string name="dialog_info_file_name">파일명</string>
+    <string name="dialog_info_file_size">파일크기</string>
+    <string name="dialog_info_file_last_modified">마지막 수정일자</string>
+    <string name="dialog_info_file_path">파일 경로</string>
 </resources>
 

@@ -70,7 +70,9 @@ class DirAdapter(items: List<File>) : RecyclerView.Adapter<DirAdapter.ViewHolder
     }
 
     override fun getItemId(position: Int): Long {
-        return mItems[position].length()
+        return mItems[position].run {
+            length() + lastModified() + hashCode()
+        }
     }
 
     override fun getItemCount() = mItems.size
