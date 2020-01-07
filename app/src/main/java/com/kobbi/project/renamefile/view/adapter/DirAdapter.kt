@@ -1,6 +1,5 @@
 package com.kobbi.project.renamefile.view.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,7 @@ import java.io.File
 import java.util.concurrent.Executors
 
 class DirAdapter(items: List<File>) : RecyclerView.Adapter<DirAdapter.ViewHolder>() {
-    private val mItems = mutableListOf<File>()
+    private var mItems: List<File> = listOf()
     private val mSelectedPositions = mutableListOf<Int>()
     private var mSelectMode: DirViewModel.SelectMode = DirViewModel.SelectMode.NORMAL
     var clickListener: ClickListener? = null
@@ -28,26 +27,23 @@ class DirAdapter(items: List<File>) : RecyclerView.Adapter<DirAdapter.ViewHolder
     }
 
 
-    fun setItems(items: List<File>): Boolean {
-        if (mItems.isNotEmpty() && items.isNotEmpty() && mItems[0].parent == items[0].parent && mItems.size == items.size) {
-            return false
-        }
-        mItems.clear()
-        mItems.addAll(items)
-        return true
+    fun setItems(items: List<File>) {
+        mItems = items.toList()
+        notifyDataSetChanged()
     }
 
-    fun setSelectMode(mode: DirViewModel.SelectMode): Boolean {
+    fun checkItemChanged(items: List<File>): Boolean {
+        return !(mItems.isNotEmpty() && items.isNotEmpty() && mItems[0].parent == items[0].parent && mItems.size == items.size)
+    }
+
+    fun setSelectMode(mode: DirViewModel.SelectMode) {
         if (mSelectMode != mode) {
             mSelectMode = mode
-            return true
+            notifyDataSetChanged()
         }
-        return false
     }
 
     fun setSelectedPositions(positions: List<Int>) {
-        Log.e("####", "positions : $positions")
-        Log.e("####", "mSelectedPositions : $mSelectedPositions")
         if (positions.size - mSelectedPositions.size < 0) {
             mSelectedPositions.filter {
                 !positions.contains(it)
@@ -59,7 +55,6 @@ class DirAdapter(items: List<File>) : RecyclerView.Adapter<DirAdapter.ViewHolder
         }.run {
             mSelectedPositions.clear()
             mSelectedPositions.addAll(positions)
-            Log.e("####", "change : $this")
             forEach {
                 notifyItemChanged(it)
             }
@@ -72,6 +67,10 @@ class DirAdapter(items: List<File>) : RecyclerView.Adapter<DirAdapter.ViewHolder
                 LayoutInflater.from(parent.context), R.layout.item_file, parent, false
             )
         return ViewHolder(binding)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return mItems[position].length()
     }
 
     override fun getItemCount() = mItems.size

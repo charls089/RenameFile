@@ -1,7 +1,6 @@
 package com.kobbi.project.renamefile.view.model
 
 import android.os.Environment
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -43,7 +42,6 @@ class DirViewModel : ViewModel() {
     val rootPath: String? = Environment.getExternalStorageDirectory().absolutePath
 
     init {
-        Log.e("####", "rootPath : $rootPath")
         setItems(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
         )
@@ -78,7 +76,6 @@ class DirViewModel : ViewModel() {
                     this
             }
             val renameFilePath = "${file.parent}/$fileName.$editExtension"
-            Log.e("####", "renameFilePath : $renameFilePath")
             file.renameTo(File(renameFilePath))
         }
         _refresh.postValue(listOf())
@@ -86,10 +83,6 @@ class DirViewModel : ViewModel() {
 
     fun clickItem(position: Int) {
         (_selectMode.value ?: SelectMode.NORMAL).let { mode ->
-            Log.e(
-                "####",
-                "clickItem() --> position : $position, mode : $mode"
-            )
             if (mode == SelectMode.MULTIPLE) {
                 val selectedPositions = mutableListOf<Int>().apply {
                     _selectedPositions.value?.run {
@@ -101,7 +94,6 @@ class DirViewModel : ViewModel() {
                 } else {
                     selectedPositions.add(position)
                 }
-                Log.e("####", "clickItem() --> selectedPositions : $selectedPositions")
                 _selectedPositions.postValue(selectedPositions)
             } else
                 clickPath(position)
@@ -190,7 +182,6 @@ class DirViewModel : ViewModel() {
     fun moveFiles() {
         val destPath = _currentPath.value
         val mode = _selectMode.value
-        Log.e("####", "DirViewModel.moveFiles() --> destPath : $destPath, mode : $mode")
         mSelectedItems?.forEach {
             val filePath = "$destPath/${it.name}"
             when (mode) {
@@ -199,7 +190,6 @@ class DirViewModel : ViewModel() {
                 }
                 SelectMode.COPY -> {
                     val file = it.copyTo(File(filePath))
-                    Log.e("####", "copyFile exists? : ${file.exists()}")
                 }
                 else -> {
                     //Nothing.
@@ -253,7 +243,6 @@ class DirViewModel : ViewModel() {
             _currentItems.postValue(filterList)
             _currentPath.postValue(file.path)
         } ?: kotlin.run {
-            Log.e("####", "path is null")
         }
     }
 

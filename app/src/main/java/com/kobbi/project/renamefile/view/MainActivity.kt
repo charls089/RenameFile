@@ -3,7 +3,6 @@ package com.kobbi.project.renamefile.view
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -32,7 +31,6 @@ class MainActivity : AppCompatActivity() {
                 })
 
                 clickEdit.observe(this@MainActivity, Observer {
-                    Log.e("####", "clickEdit Button")
                     //dialog
                     AlertDialog.Builder(this@MainActivity).run {
                         setTitle(R.string.dialog_edit_title)
@@ -50,7 +48,6 @@ class MainActivity : AppCompatActivity() {
                 })
 
                 clickSend.observe(this@MainActivity, Observer {
-                    Log.e("####", "clickSend Button")
                     val sendIntent = Intent(Intent.ACTION_SEND_MULTIPLE).apply {
                         type = "plain/text"
                         val uriList = ArrayList<Uri>().apply {
@@ -59,7 +56,6 @@ class MainActivity : AppCompatActivity() {
                                     FileProvider.getUriForFile(
                                         applicationContext, "$packageName.file.provider", it
                                     )
-                                Log.e("####", "uri : $uri")
                                 add(uri)
                             }
                         }
@@ -68,12 +64,7 @@ class MainActivity : AppCompatActivity() {
                     startActivity(sendIntent)
                 })
 
-                clickCreateFolder.observe(this@MainActivity, Observer {
-                    Log.e("####", "clickCreateFolder Button")
-                })
-
                 clickDelete.observe(this@MainActivity, Observer {
-                    Log.e("####", "clickDelete Button")
                     AlertDialog.Builder(this@MainActivity).run {
                         setTitle(R.string.dialog_delete_files_title)
                         setMessage(R.string.dialog_delete_files_message)
@@ -89,16 +80,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 })
 
-                clickCopy.observe(this@MainActivity, Observer {
-                    Log.e("####", "clickCopy Button")
-                })
-
-                clickMove.observe(this@MainActivity, Observer {
-                    Log.e("####", "clickMove Button")
-                })
-
                 clickInfo.observe(this@MainActivity, Observer {
-                    Log.e("####", "clickInfo Button")
                     Toast.makeText(applicationContext, "서비스 준비중입니다.", Toast.LENGTH_SHORT).show()
                 })
             }

@@ -2,7 +2,6 @@ package com.kobbi.project.renamefile.view.adapter
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -30,21 +29,18 @@ class BindingAdapter private constructor() {
             selectMode: DirViewModel.SelectMode?,
             positions: List<Int>?
         ) {
-            Log.e("####", "setDirectory() --> items : $items")
             if (items != null && dirVm != null) {
                 recyclerView.adapter?.run {
                     if (this is DirAdapter) {
-                        val mode = selectMode ?: DirViewModel.SelectMode.NORMAL
-                        if (setItems(items) || setSelectMode(mode))
-                            if (items.isEmpty())
-                                notifyDataSetChanged()
-                            else
-                                notifyItemRangeChanged(0, items.size)
+                        if (checkItemChanged(items))
+                            setItems(items)
+                        setSelectMode(selectMode ?: DirViewModel.SelectMode.NORMAL)
                         if (positions != null)
                             setSelectedPositions(positions)
                     }
                 } ?: kotlin.run {
                     val adapter = DirAdapter(items).apply {
+                        setHasStableIds(true)
                         clickListener = object : ClickListener {
                             override fun onItemClick(position: Int, view: View) {
                                 dirVm.clickItem(position)
@@ -91,7 +87,6 @@ class BindingAdapter private constructor() {
         @BindingAdapter("app:setRefresh")
         @JvmStatic
         fun setRefresh(view: RecyclerView, refreshList: List<Int>?) {
-            Log.e("####", "setRefresh() -->refreshList : $refreshList")
             view.adapter?.run {
                 if (refreshList.isNullOrEmpty())
                     notifyDataSetChanged()
@@ -121,7 +116,7 @@ class BindingAdapter private constructor() {
         @JvmStatic
         fun setFileMoveMode(view: View, mode: DirViewModel.SelectMode?) {
             when (mode) {
-                DirViewModel.SelectMode.MOVE, DirViewModel.SelectMode.COPY-> {
+                DirViewModel.SelectMode.MOVE, DirViewModel.SelectMode.COPY -> {
                     view.visibility = View.VISIBLE
                 }
                 else -> {
