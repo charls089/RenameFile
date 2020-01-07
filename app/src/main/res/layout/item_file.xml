@@ -16,25 +16,42 @@
             type="android.graphics.Bitmap" />
 
         <variable
-            name="file_position"
-            type="Integer" />
+            name="is_selected"
+            type="Boolean" />
+
+        <variable
+            name="select_mode"
+            type="com.kobbi.project.renamefile.view.model.DirViewModel.SelectMode" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="6dp"
+        android:layout_margin="6dp"
         android:background="?attr/selectableItemBackground"
         android:padding="5dp">
+
+        <CheckBox
+            android:id="@+id/cb_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:clickable="false"
+            app:setSelectMode="@{select_mode}"
+            android:checked="@{is_selected}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/iv_file_img"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/iv_file_img"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_marginStart="5dp"
             app:getFile="@{file}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/cb_select"
             app:layout_constraintTop_toTopOf="parent"
             app:setImg="@{img}"
             tools:ignore="ContentDescription" />
@@ -69,8 +86,8 @@
             android:id="@+id/tv_item_file_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14dp"
             android:layout_marginEnd="7dp"
+            android:textSize="14dp"
             app:getFileSize="@{file}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

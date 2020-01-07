@@ -11,14 +11,35 @@ import java.io.File
 import java.io.FileFilter
 
 class DirViewModel : ViewModel() {
+    enum class SelectMode {
+        NORMAL, MULTIPLE, MOVE, COPY
+    }
+
+    val selectMode: LiveData<SelectMode> get() = _selectMode
+    val selectedPositions: LiveData<List<Int>> get() = _selectedPositions
     val currentItems: LiveData<List<File>> get() = _currentItems
     val currentPath: LiveData<String> get() = _currentPath
+
     val clickEdit: SingleLiveEvent<Any> = SingleLiveEvent()
     val clickSend: SingleLiveEvent<List<File>> = SingleLiveEvent()
+    val clickCreateFolder: SingleLiveEvent<Any> = SingleLiveEvent()
+    val clickMove: SingleLiveEvent<Any> = SingleLiveEvent()
+    val clickCopy: SingleLiveEvent<Any> = SingleLiveEvent()
+    val clickDelete: SingleLiveEvent<Any> = SingleLiveEvent()
+    val clickInfo: SingleLiveEvent<Any> = SingleLiveEvent()
 
+    val refresh: LiveData<List<Int>> get() = _refresh
+    val folderName: MutableLiveData<String> = MutableLiveData()
+    val isCreateNewFolderOpen: LiveData<Boolean> get() = _isCreateNewFolderOpen
+
+    private val _isCreateNewFolderOpen: MutableLiveData<Boolean> = MutableLiveData()
+    private val _selectedPositions: MutableLiveData<List<Int>> = MutableLiveData()
     private val _currentPath: MutableLiveData<String> = MutableLiveData()
     private val _currentItems: MutableLiveData<List<File>> = MutableLiveData()
+    private val _selectMode: MutableLiveData<SelectMode> = MutableLiveData()
+    private val _refresh: MutableLiveData<List<Int>> = MutableLiveData()
 
+    private var mSelectedItems: List<File>? = null
     val rootPath: String? = Environment.getExternalStorageDirectory().absolutePath
 
     init {
@@ -26,10 +47,17 @@ class DirViewModel : ViewModel() {
         setItems(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
         )
+        _selectMode.postValue(SelectMode.NORMAL)
     }
 
     fun isRootPath(): Boolean {
         return _currentPath.value == rootPath
+    }
+
+    fun resetMode() {
+        _selectMode.postValue(SelectMode.NORMAL)
+        _selectedPositions.postValue(listOf())
+        _isCreateNewFolderOpen.postValue(false)
     }
 
     fun goToPrevPath() {
@@ -53,12 +81,35 @@ class DirViewModel : ViewModel() {
             Log.e("####", "renameFilePath : $renameFilePath")
             file.renameTo(File(renameFilePath))
         }
-        setItems(_currentPath.value)
+        _refresh.postValue(listOf())
     }
 
     fun clickItem(position: Int) {
+        (_selectMode.value ?: SelectMode.NORMAL).let { mode ->
+            Log.e(
+                "####",
+                "clickItem() --> position : $position, mode : $mode"
+            )
+            if (mode == SelectMode.MULTIPLE) {
+                val selectedPositions = mutableListOf<Int>().apply {
+                    _selectedPositions.value?.run {
+                        addAll(this)
+                    }
+                }
+                if (selectedPositions.contains(position)) {
+                    selectedPositions.remove(position)
+                } else {
+                    selectedPositions.add(position)
+                }
+                Log.e("####", "clickItem() --> selectedPositions : $selectedPositions")
+                _selectedPositions.postValue(selectedPositions)
+            } else
+                clickPath(position)
+        }
+    }
+
+    fun clickPath(position: Int) {
         _currentItems.value?.get(position)?.let { file ->
-            Log.e("####", "clickItem() --> position : $position, file.path : ${file.path}")
             when {
                 Utils.isDirectory(file) -> {
                     setItems(file.path)
@@ -70,12 +121,112 @@ class DirViewModel : ViewModel() {
         }
     }
 
+    fun longClickItem(position: Int) {
+        if (_selectMode.value == SelectMode.MULTIPLE) {
+            clickItem(position)
+        } else {
+            _selectMode.postValue(SelectMode.MULTIPLE)
+            _selectedPositions.postValue(listOf(position))
+        }
+    }
+
     fun clickEdit() {
         clickEdit.call()
     }
 
     fun clickSend() {
         clickSend.call(_currentItems.value)
+    }
+
+    fun clickCreateFolder() {
+        _isCreateNewFolderOpen.postValue(true)
+        clickCreateFolder.call()
+    }
+
+    fun clickMove() {
+        _selectMode.postValue(SelectMode.MOVE)
+        setSelectedItems()
+        clickMove.call()
+    }
+
+    fun clickCopy() {
+        _selectMode.postValue(SelectMode.COPY)
+        setSelectedItems()
+        clickCopy.call()
+    }
+
+    fun clickDelete() {
+        clickDelete.call()
+    }
+
+    fun clickInfo() {
+        clickInfo.call()
+    }
+
+    fun clickCancel() {
+        _isCreateNewFolderOpen.postValue(false)
+    }
+
+    fun createNewFolder() {
+        _isCreateNewFolderOpen.postValue(false)
+        _currentPath.value?.let { path ->
+            val name = folderName.value ?: "새폴더"
+            File("$path/$name").mkdirs()
+            setItems(path)
+            folderName.postValue("")
+        }
+    }
+
+    fun removeFiles() {
+        _selectedPositions.value?.let { positions ->
+            positions.forEach {
+                _currentItems.value?.get(it)?.delete()
+            }
+        }
+        resetMode()
+        setItems(_currentPath.value)
+    }
+
+    fun moveFiles() {
+        val destPath = _currentPath.value
+        val mode = _selectMode.value
+        Log.e("####", "DirViewModel.moveFiles() --> destPath : $destPath, mode : $mode")
+        mSelectedItems?.forEach {
+            val filePath = "$destPath/${it.name}"
+            when (mode) {
+                SelectMode.MOVE -> {
+                    it.renameTo(File(filePath))
+                }
+                SelectMode.COPY -> {
+                    val file = it.copyTo(File(filePath))
+                    Log.e("####", "copyFile exists? : ${file.exists()}")
+                }
+                else -> {
+                    //Nothing.
+                }
+            }
+        }
+        resetMode()
+        setItems(_currentPath.value)
+    }
+
+    fun showInfo() {
+
+    }
+
+    fun clickAll() {
+        _currentItems.value?.let { files ->
+            _selectedPositions.value?.let { positions ->
+                if (positions.size != files.size) {
+                    val tmpFiles = mutableListOf<Int>()
+                    for (i in files.indices)
+                        tmpFiles.add(i)
+                    _selectedPositions.postValue(tmpFiles)
+                } else {
+                    _selectedPositions.postValue(listOf())
+                }
+            }
+        }
     }
 
     private fun setItems(path: String?) {
@@ -103,6 +254,12 @@ class DirViewModel : ViewModel() {
             _currentPath.postValue(file.path)
         } ?: kotlin.run {
             Log.e("####", "path is null")
+        }
+    }
+
+    private fun setSelectedItems() {
+        mSelectedItems = _currentItems.value?.filterIndexed { index, _ ->
+            _selectedPositions.value?.contains(index) ?: false
         }
     }
 }

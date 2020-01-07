@@ -10,91 +10,269 @@
             type="com.kobbi.project.renamefile.view.model.DirViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp"
-        tools:context=".view.MainActivity">
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/lo_app_bar_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimaryDark"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            tools:context=".view.MainActivity">
 
-            <TextView
-                android:id="@+id/tv_app_name"
-                android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/lo_app_bar_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                android:textSize="24sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageButton
-                android:id="@+id/ib_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/edit_content_description"
-                android:onClick="@{()->dirVm.clickEdit()}"
-                android:padding="5dp"
-                android:src="@drawable/baseline_edit_24"
-                app:layout_constraintEnd_toStartOf="@id/ib_send_email"
-                app:layout_constraintBottom_toBottomOf="@id/tv_app_name"
-                app:layout_constraintTop_toTopOf="@id/tv_app_name" />
-
-            <ImageButton
-                android:id="@+id/ib_send_email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/send_email_content_description"
-                android:onClick="@{()->dirVm.clickSend()}"
-                android:padding="5dp"
-                android:src="@drawable/baseline_email_24"
+                android:background="@color/colorPrimaryDark"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/tv_app_name"
-                app:layout_constraintTop_toTopOf="@id/tv_app_name" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_app_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textSize="24sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/ib_create_new_folder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/send_email_content_description"
+                    android:onClick="@{()->dirVm.clickCreateFolder()}"
+                    android:padding="5dp"
+                    android:src="@drawable/baseline_create_new_folder_24"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_app_name"
+                    app:layout_constraintEnd_toStartOf="@id/ib_edit"
+                    app:layout_constraintTop_toTopOf="@id/tv_app_name" />
+
+                <ImageButton
+                    android:id="@+id/ib_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/edit_content_description"
+                    android:onClick="@{()->dirVm.clickEdit()}"
+                    android:padding="5dp"
+                    android:src="@drawable/baseline_edit_24"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_app_name"
+                    app:layout_constraintEnd_toStartOf="@id/ib_send_email"
+                    app:layout_constraintTop_toTopOf="@id/tv_app_name" />
+
+                <ImageButton
+                    android:id="@+id/ib_send_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/send_email_content_description"
+                    android:onClick="@{()->dirVm.clickSend()}"
+                    android:padding="5dp"
+                    android:src="@drawable/baseline_email_24"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_app_name"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_app_name" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_path"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lo_app_bar_container"
+                app:setFiles="@{dirVm.currentPath}"
+                app:setVm="@{dirVm}" />
+
+            <CheckBox
+                android:id="@+id/cb_all_select"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="11dp"
+                android:layout_marginTop="7dp"
+                android:onClick="@{()->dirVm.clickAll()}"
+                android:text="전체선택"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rv_path"
+                app:setSelectMode="@{dirVm.selectMode}" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="7dp"
+                android:fadeScrollbars="true"
+                android:orientation="vertical"
+                android:scrollbars="vertical"
+                app:fastScrollEnabled="true"
+                app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+                app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cb_all_select"
+                app:setDir="@{dirVm.currentItems}"
+                app:setRefresh="@{dirVm.refresh}"
+                app:setSelectMode="@{dirVm.selectMode}"
+                app:setSelectedPositions="@{dirVm.selectedPositions}"
+                app:setVm="@{dirVm}" />
+
+            <LinearLayout
+                android:id="@+id/lo_app_footer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryDark"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:setSelectMode="@{dirVm.selectMode}">
+
+                <Button
+                    android:id="@+id/btn_move"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/move_content_description"
+                    android:drawableTop="@drawable/baseline_assignment_return_24"
+                    android:onClick="@{()->dirVm.clickMove()}"
+                    android:text="@string/button_move" />
+
+                <Button
+                    android:id="@+id/btn_copy"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/copy_content_description"
+                    android:drawableTop="@drawable/baseline_file_copy_24"
+                    android:onClick="@{()->dirVm.clickCopy()}"
+                    android:text="@string/button_copy" />
+
+                <Button
+                    android:id="@+id/btn_info"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/info_content_description"
+                    android:drawableTop="@drawable/baseline_info_24"
+                    android:onClick="@{()->dirVm.clickInfo()}"
+                    android:text="@string/button_description" />
+
+                <Button
+                    android:id="@+id/btn_delete"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/delete_content_description"
+                    android:drawableTop="@drawable/baseline_delete_24"
+                    android:onClick="@{()->dirVm.clickDelete()}"
+                    android:text="@string/button_delete" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryDark"
+                android:orientation="horizontal"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:setFileMoveMode="@{dirVm.selectMode}">
+
+                <TextView
+                    android:id="@+id/tv_selected_count"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:text="@{@string/count_format(dirVm.selectedPositions.size())}" />
+
+                <Button
+                    android:id="@id/btn_move"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{()->dirVm.moveFiles()}"
+                    app:setMoveText="@{dirVm.selectMode}" />
+
+                <Button
+                    android:id="@+id/btn_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{()->dirVm.resetMode()}"
+                    android:text="@string/dialog_cancel" />
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_path"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/lo_app_bar_container"
-            app:setFiles="@{dirVm.currentPath}"
-            app:setVm="@{dirVm}" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="7dp"
-            android:fadeScrollbars="true"
+            android:layout_gravity="center"
+            android:layout_margin="15dp"
+            android:background="@drawable/border_progress_dialog"
             android:orientation="vertical"
-            android:scrollbars="vertical"
-            app:fastScrollEnabled="true"
-            app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
-            app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
-            app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
-            app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rv_path"
-            app:setDir="@{dirVm.currentItems}"
-            app:setVm="@{dirVm}" />
+            android:visibility="gone"
+            app:setOpenDialog="@{dirVm.isCreateNewFolderOpen}">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@string/dialog_create_new_folder_title"
+                android:textSize="21sp" />
+
+            <EditText
+                android:id="@+id/et_file_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/dialog_create_new_folder_hint"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:text="@={dirVm.folderName}" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:orientation="horizontal">
+
+                <Button
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{()->dirVm.createNewFolder()}"
+                    android:text="@string/dialog_ok" />
+
+                <Button
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{()->dirVm.clickCancel()}"
+                    android:text="@string/dialog_cancel" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </FrameLayout>
 </layout>

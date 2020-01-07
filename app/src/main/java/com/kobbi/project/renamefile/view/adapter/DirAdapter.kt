@@ -1,5 +1,6 @@
 package com.kobbi.project.renamefile.view.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,22 +12,58 @@ import com.kobbi.project.renamefile.databinding.ItemFileBinding
 import com.kobbi.project.renamefile.listener.ClickListener
 import com.kobbi.project.renamefile.listener.LongClickListener
 import com.kobbi.project.renamefile.utils.Utils
+import com.kobbi.project.renamefile.view.model.DirViewModel
 import java.io.File
 import java.util.concurrent.Executors
 
 class DirAdapter(items: List<File>) : RecyclerView.Adapter<DirAdapter.ViewHolder>() {
     private val mItems = mutableListOf<File>()
-    private var mClickListener: ClickListener? = null
-    private var mLongClickListener: LongClickListener? = null
+    private val mSelectedPositions = mutableListOf<Int>()
+    private var mSelectMode: DirViewModel.SelectMode = DirViewModel.SelectMode.NORMAL
+    var clickListener: ClickListener? = null
+    var longClickListener: LongClickListener? = null
 
     init {
         setItems(items)
     }
 
-    fun setItems(items: List<File>) {
+
+    fun setItems(items: List<File>): Boolean {
+        if (mItems.isNotEmpty() && items.isNotEmpty() && mItems[0].parent == items[0].parent && mItems.size == items.size) {
+            return false
+        }
         mItems.clear()
         mItems.addAll(items)
-        notifyDataSetChanged()
+        return true
+    }
+
+    fun setSelectMode(mode: DirViewModel.SelectMode): Boolean {
+        if (mSelectMode != mode) {
+            mSelectMode = mode
+            return true
+        }
+        return false
+    }
+
+    fun setSelectedPositions(positions: List<Int>) {
+        Log.e("####", "positions : $positions")
+        Log.e("####", "mSelectedPositions : $mSelectedPositions")
+        if (positions.size - mSelectedPositions.size < 0) {
+            mSelectedPositions.filter {
+                !positions.contains(it)
+            }
+        } else {
+            positions.filter {
+                !mSelectedPositions.contains(it)
+            }
+        }.run {
+            mSelectedPositions.clear()
+            mSelectedPositions.addAll(positions)
+            Log.e("####", "change : $this")
+            forEach {
+                notifyItemChanged(it)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -43,37 +80,31 @@ class DirAdapter(items: List<File>) : RecyclerView.Adapter<DirAdapter.ViewHolder
         holder.bind(position)
     }
 
-    fun setOnClickListener(clickListener: ClickListener) {
-        mClickListener = clickListener
-    }
-
-    fun setOnLongClickListener(longClickListener: LongClickListener) {
-        mLongClickListener = longClickListener
-    }
-
     inner class ViewHolder(private val binding: ItemFileBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener,
         View.OnLongClickListener {
         init {
-            val view = binding.root
-            view.setOnClickListener(this)
-            view.setOnLongClickListener(this)
+            binding.root.let { view ->
+                view.setOnClickListener(this)
+                view.setOnLongClickListener(this)
+            }
         }
 
         override fun onClick(v: View?) {
-            v?.let { mClickListener?.onItemClick(layoutPosition, v) }
+            v?.let { clickListener?.onItemClick(layoutPosition, v) }
         }
 
         override fun onLongClick(v: View?): Boolean {
-            v?.let { mLongClickListener?.onItemLongClick(layoutPosition, v) }
+            v?.let { longClickListener?.onItemLongClick(layoutPosition, v) }
             return true
         }
 
-        fun bind(position:Int) {
+        fun bind(position: Int) {
             val file = mItems[position]
             binding.setVariable(BR.file, file)
-            binding.setVariable(BR.file_position, position)
+            binding.setVariable(BR.is_selected, mSelectedPositions.contains(position))
             getImage(file)
+            binding.setVariable(BR.select_mode, mSelectMode)
         }
 
         private fun getImage(file: File) {

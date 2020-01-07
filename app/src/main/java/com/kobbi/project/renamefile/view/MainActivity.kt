@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -34,13 +35,13 @@ class MainActivity : AppCompatActivity() {
                     Log.e("####", "clickEdit Button")
                     //dialog
                     AlertDialog.Builder(this@MainActivity).run {
-                        setTitle("파일 확장자 변경")
-                        setMessage("정말 변경 하시겠습니까?")
-                        setPositiveButton("예") { dialog, _ ->
+                        setTitle(R.string.dialog_edit_title)
+                        setMessage(R.string.dialog_edit_message)
+                        setPositiveButton(R.string.dialog_yes) { dialog, _ ->
                             mDirViewModel.editFileExtension()
                             dialog.dismiss()
                         }
-                        setNegativeButton("아니요") { dialog, _ ->
+                        setNegativeButton(R.string.dialog_no) { dialog, _ ->
                             dialog.cancel()
                         }
                         setCancelable(false)
@@ -66,6 +67,40 @@ class MainActivity : AppCompatActivity() {
                     }
                     startActivity(sendIntent)
                 })
+
+                clickCreateFolder.observe(this@MainActivity, Observer {
+                    Log.e("####", "clickCreateFolder Button")
+                })
+
+                clickDelete.observe(this@MainActivity, Observer {
+                    Log.e("####", "clickDelete Button")
+                    AlertDialog.Builder(this@MainActivity).run {
+                        setTitle(R.string.dialog_delete_files_title)
+                        setMessage(R.string.dialog_delete_files_message)
+                        setPositiveButton(R.string.dialog_yes) { dialog, _ ->
+                            mDirViewModel.removeFiles()
+                            dialog.dismiss()
+                        }
+                        setNegativeButton(R.string.dialog_no) { dialog, _ ->
+                            dialog.cancel()
+                        }
+                        setCancelable(false)
+                        show()
+                    }
+                })
+
+                clickCopy.observe(this@MainActivity, Observer {
+                    Log.e("####", "clickCopy Button")
+                })
+
+                clickMove.observe(this@MainActivity, Observer {
+                    Log.e("####", "clickMove Button")
+                })
+
+                clickInfo.observe(this@MainActivity, Observer {
+                    Log.e("####", "clickInfo Button")
+                    Toast.makeText(applicationContext, "서비스 준비중입니다.", Toast.LENGTH_SHORT).show()
+                })
             }
             lifecycleOwner = this@MainActivity
         }
@@ -73,10 +108,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         mDirViewModel.run {
-            if (isRootPath())
-                mBackPressedCloser.onBackPressed()
-            else
-                goToPrevPath()
+            when {
+                this.selectMode.value == DirViewModel.SelectMode.MULTIPLE -> {
+                    resetMode()
+                }
+                isRootPath() -> mBackPressedCloser.onBackPressed()
+                else -> goToPrevPath()
+            }
         }
     }
 }

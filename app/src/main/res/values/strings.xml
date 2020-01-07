@@ -4,6 +4,29 @@
     <string name="info_exit_message">\'뒤로\'버튼 한번 더 누르시면 종료됩니다.</string>
     <string name="edit_content_description">edit file extension</string>
     <string name="send_email_content_description">send email with file</string>
+    <string name="move_content_description">move files</string>
+    <string name="copy_content_description">copy files</string>
+    <string name="info_content_description">info files</string>
+    <string name="delete_content_description">delete files</string>
     <string name="info_progress">데이터 변경중 …</string>
+
+    <string name="button_move">이동</string>
+    <string name="button_copy">복사</string>
+    <string name="button_description">상세정보</string>
+    <string name="button_delete">삭제</string>
+
+    <string name="dialog_create_new_folder_title">새폴더 생성</string>
+    <string name="dialog_create_new_folder_hint">폴더명을 입력해주세요.</string>
+    <string name="dialog_ok">확인</string>
+    <string name="dialog_cancel">취소</string>
+
+    <string name="dialog_edit_title">파일 확장자 변경</string>
+    <string name="dialog_edit_message">정말 변경 하시겠습니까?</string>
+    <string name="dialog_delete_files_title">파일 삭제</string>
+    <string name="dialog_delete_files_message">선택하신 파일(들)을 삭제하시겠습니까?</string>
+    <string name="dialog_yes">예</string>
+    <string name="dialog_no">아니요</string>
+
+    <string name="count_format">총 %d개</string>
 </resources>
 
