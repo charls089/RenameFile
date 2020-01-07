@@ -84,19 +84,6 @@ class BindingAdapter private constructor() {
             }
         }
 
-        @BindingAdapter("app:setRefresh")
-        @JvmStatic
-        fun setRefresh(view: RecyclerView, refreshList: List<Int>?) {
-            view.adapter?.run {
-                if (refreshList.isNullOrEmpty())
-                    notifyDataSetChanged()
-                else
-                    refreshList.forEach { position ->
-                        notifyItemChanged(position)
-                    }
-            }
-        }
-
         @BindingAdapter("app:setSelectMode")
         @JvmStatic
         fun setSelectMode(view: View, mode: DirViewModel.SelectMode?) {

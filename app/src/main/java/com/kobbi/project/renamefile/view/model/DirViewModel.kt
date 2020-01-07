@@ -8,6 +8,9 @@ import com.kobbi.project.renamefile.utils.SingleLiveEvent
 import com.kobbi.project.renamefile.utils.Utils
 import java.io.File
 import java.io.FileFilter
+import java.util.*
+import kotlin.Comparator
+import kotlin.concurrent.schedule
 
 class DirViewModel : ViewModel() {
     enum class SelectMode {
@@ -24,7 +27,6 @@ class DirViewModel : ViewModel() {
     val clickDelete: SingleLiveEvent<Any> = SingleLiveEvent()
     val clickInfo: SingleLiveEvent<File> = SingleLiveEvent()
 
-    val refresh: LiveData<List<Int>> get() = _refresh
     val folderName: MutableLiveData<String> = MutableLiveData()
     val isCreateNewFolderOpen: LiveData<Boolean> get() = _isCreateNewFolderOpen
 
@@ -33,7 +35,6 @@ class DirViewModel : ViewModel() {
     private val _currentPath: MutableLiveData<String> = MutableLiveData()
     private val _currentItems: MutableLiveData<List<File>> = MutableLiveData()
     private val _selectMode: MutableLiveData<SelectMode> = MutableLiveData()
-    private val _refresh: MutableLiveData<List<Int>> = MutableLiveData()
 
     private var mSelectedItems: List<File>? = null
     val rootPath: String? = Environment.getExternalStorageDirectory().absolutePath
@@ -76,7 +77,10 @@ class DirViewModel : ViewModel() {
             val renameFilePath = "${file.parent}/$fileName.$editExtension"
             file.renameTo(File(renameFilePath))
         }
-        _refresh.postValue(listOf())
+        _currentItems.postValue(listOf())
+        Timer().schedule(300) {
+            setItems(_currentPath.value)
+        }
     }
 
     fun clickItem(position: Int) {
@@ -170,7 +174,9 @@ class DirViewModel : ViewModel() {
     fun removeFiles() {
         _selectedPositions.value?.let { positions ->
             positions.forEach {
-                _currentItems.value?.get(it)?.delete()
+                _currentItems.value?.get(it)?.run {
+                    removeDir(this)
+                }
             }
         }
         resetMode()
@@ -197,10 +203,6 @@ class DirViewModel : ViewModel() {
         }
         resetMode()
         setItems(_currentPath.value)
-    }
-
-    fun showInfo() {
-
     }
 
     fun clickAll() {
@@ -241,7 +243,6 @@ class DirViewModel : ViewModel() {
             }
             _currentItems.postValue(filterList)
             _currentPath.postValue(file.path)
-        } ?: kotlin.run {
         }
     }
 
@@ -249,5 +250,14 @@ class DirViewModel : ViewModel() {
         mSelectedItems = _currentItems.value?.filterIndexed { index, _ ->
             _selectedPositions.value?.contains(index) ?: false
         }
+    }
+
+    private fun removeDir(file: File) {
+        file.listFiles()?.forEach {
+            if (it.isDirectory)
+                removeDir(it)
+            else
+                it.delete()
+        } ?: file.delete()
     }
 }

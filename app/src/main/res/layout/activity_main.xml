@@ -125,7 +125,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cb_all_select"
                 app:setDir="@{dirVm.currentItems}"
-                app:setRefresh="@{dirVm.refresh}"
                 app:setSelectMode="@{dirVm.selectMode}"
                 app:setSelectedPositions="@{dirVm.selectedPositions}"
                 app:setVm="@{dirVm}" />
