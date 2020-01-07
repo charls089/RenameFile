@@ -258,6 +258,7 @@ class DirViewModel : ViewModel() {
                 removeDir(it)
             else
                 it.delete()
-        } ?: file.delete()
+        }
+        file.delete()
     }
 }
