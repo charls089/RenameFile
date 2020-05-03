@@ -3,9 +3,12 @@ package com.kobbi.project.renamefile.view
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -14,7 +17,9 @@ import com.kobbi.project.renamefile.R
 import com.kobbi.project.renamefile.databinding.ActivityMainBinding
 import com.kobbi.project.renamefile.utils.BackPressedCloser
 import com.kobbi.project.renamefile.utils.Utils
+import com.kobbi.project.renamefile.view.adapter.DirAdapter
 import com.kobbi.project.renamefile.view.model.DirViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     private val mBackPressedCloser by lazy { BackPressedCloser(this) }
@@ -24,6 +29,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.e("####","externalMediaDirs --> ${  application.externalMediaDirs}")
+        val externalStorageVolume = ContextCompat.getExternalFilesDirs(applicationContext, null)
+        Log.e("####","getExternalFilesDirs() --> ${externalStorageVolume.toList()}")
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main).run {
             dirVm = mDirViewModel.apply {
                 currentPath.observe(this@MainActivity, Observer {

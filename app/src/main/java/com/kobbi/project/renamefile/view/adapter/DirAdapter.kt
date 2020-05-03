@@ -28,7 +28,7 @@ class DirAdapter(items: List<File>) : RecyclerView.Adapter<DirAdapter.ViewHolder
 
 
     fun setItems(items: List<File>) {
-        mItems = items.toList()
+        mItems = items
         notifyDataSetChanged()
     }
 
